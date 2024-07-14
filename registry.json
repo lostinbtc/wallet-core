@@ -121,7 +121,7 @@
   {
     "id": "pepe",
     "name": "Pepecoin",
-    "coinId": 3,
+    "coinId": 4,
     "symbol": "PEPE",
     "decimals": 8,
     "blockchain": "Bitcoin",
