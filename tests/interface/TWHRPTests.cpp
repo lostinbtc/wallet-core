@@ -95,6 +95,7 @@ TEST(TWHPR, HPRByCoinType) {
     ASSERT_EQ(TWHRPUnknown, TWCoinTypeHRP(TWCoinTypeDash));
     ASSERT_EQ(TWHRPUnknown, TWCoinTypeHRP(TWCoinTypeDecred));
     ASSERT_EQ(TWHRPUnknown, TWCoinTypeHRP(TWCoinTypeDogecoin));
+    ASSERT_EQ(TWHRPUnknown, TWCoinTypeHRP(TWCoinTypePepecoin));
     ASSERT_EQ(TWHRPUnknown, TWCoinTypeHRP(TWCoinTypeEOS));
     ASSERT_EQ(TWHRPUnknown, TWCoinTypeHRP(TWCoinTypeEthereum));
     ASSERT_EQ(TWHRPUnknown, TWCoinTypeHRP(TWCoinTypeEthereumClassic));

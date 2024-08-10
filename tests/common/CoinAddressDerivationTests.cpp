@@ -173,6 +173,9 @@ TEST(Coin, DeriveAddress) {
         case TWCoinTypeDogecoin:
             EXPECT_EQ(address, "DNRTC6GZ5evmM7BZWwPqF54fyDqUqULMyu");
             break;
+        case TWCoinTypePepecoin:
+            EXPECT_EQ(address, "PqD8nv23YLyYcNop9r47rL98LLY1MYsgnq");
+            break;
         case TWCoinTypeECash:
             EXPECT_EQ(address, "ecash:qz7eyzytkl5z6cg6nw20hd62pyyp22mcfuywezks2y");
             break;

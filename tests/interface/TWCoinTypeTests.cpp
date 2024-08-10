@@ -39,6 +39,7 @@ TEST(TWCoinType, TWPurpose) {
     ASSERT_EQ(TWPurposeBIP44, TWCoinTypePurpose(TWCoinTypeDash));
     ASSERT_EQ(TWPurposeBIP44, TWCoinTypePurpose(TWCoinTypeDecred));
     ASSERT_EQ(TWPurposeBIP44, TWCoinTypePurpose(TWCoinTypeDogecoin));
+    ASSERT_EQ(TWPurposeBIP44, TWCoinTypePurpose(TWCoinTypePepecoin));
     ASSERT_EQ(TWPurposeBIP44, TWCoinTypePurpose(TWCoinTypeEOS));
     ASSERT_EQ(TWPurposeBIP44, TWCoinTypePurpose(TWCoinTypeEthereum));
     ASSERT_EQ(TWPurposeBIP44, TWCoinTypePurpose(TWCoinTypeEthereumClassic));
@@ -80,6 +81,9 @@ TEST(TWCoinType, TWHDVersion) {
 
     ASSERT_EQ(TWHDVersionDGUB, TWCoinTypeXpubVersion(TWCoinTypeDogecoin));
     ASSERT_EQ(TWHDVersionDGPV, TWCoinTypeXprvVersion(TWCoinTypeDogecoin));
+    
+    ASSERT_EQ(TWHDVersionDGUB, TWCoinTypeXpubVersion(TWCoinTypePepecoin));
+    ASSERT_EQ(TWHDVersionDGPV, TWCoinTypeXprvVersion(TWCoinTypePepecoin));
 }
 
 TEST(TWCoinType, TWPublicKeyType) {

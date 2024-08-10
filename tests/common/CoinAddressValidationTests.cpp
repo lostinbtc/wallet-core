@@ -81,6 +81,14 @@ TEST(Coin, ValidateAddressDogecoin) {
     EXPECT_FALSE(validateAddress(TWCoinTypeDogecoin, "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2"));
 }
 
+TEST(Coin, ValidateAddressPepecoin) {
+    EXPECT_TRUE(validateAddress(TWCoinTypePepecoin, "PqD8nv23YLyYcNop9r47rL98LLY1MYsgnq"));
+
+    EXPECT_FALSE(validateAddress(TWCoinTypePepecoin, "NmH7tmeJUmHcncBDvpr7aJNEBk7rp5zYsB1qt"));
+    EXPECT_FALSE(validateAddress(TWCoinTypePepecoin, "tz1eZwq8b5cvE2bPKokatLkVMzkxz24z3AAAA"));
+    EXPECT_FALSE(validateAddress(TWCoinTypePepecoin, "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2"));
+}
+
 TEST(Coin, ValidateAddressDecred) {
     EXPECT_TRUE(validateAddress(TWCoinTypeDecred, "DsZgSbMPgKKJVm2j9Vuk3VEUBykkw72a56D"));
     EXPECT_TRUE(validateAddress(TWCoinTypeDecred, "Dcur2mcGjmENx4DhNqDctW5wJCVyT3Qeqkx"));

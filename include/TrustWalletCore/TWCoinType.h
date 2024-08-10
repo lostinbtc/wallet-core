@@ -42,6 +42,7 @@ enum TWCoinType {
     TWCoinTypeDecred = 42,
     TWCoinTypeDigiByte = 20,
     TWCoinTypeDogecoin = 3,
+    TWCoinTypePepecoin = 3434,
     TWCoinTypeEOS = 194,
     TWCoinTypeWAX = 14001,
     TWCoinTypeEthereum = 60,

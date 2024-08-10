@@ -119,6 +119,38 @@
     }
   },
   {
+    "id": "pepe",
+    "name": "Pepecoin",
+    "coinId": 3434,
+    "symbol": "PEPE",
+    "decimals": 8,
+    "blockchain": "Bitcoin",
+    "derivation": [
+      {
+        "path": "m/44'/3434'/0'/0/0",
+        "xpub": "dgub",
+        "xprv": "dgpv"
+      }
+    ],
+    "curve": "secp256k1",
+    "publicKeyType": "secp256k1",
+    "p2pkhPrefix": 56,
+    "p2shPrefix": 22,
+    "publicKeyHasher": "sha256ripemd",
+    "base58Hasher": "sha256d",
+    "explorer": {
+      "url": "https://blockchair.com",
+      "txPath": "/pepecoin/transaction/",
+      "accountPath": "/pepecoin/address/"
+    },
+    "info": {
+      "url": "https://pepecoin.org",
+      "source": "https://github.com/trezor/blockbook",
+      "rpc": "",
+      "documentation": "https://github.com/trezor/blockbook/blob/master/docs/api.md"
+    }
+  },  
+  {
     "id": "dash",
     "name": "Dash",
     "coinId": 5,
