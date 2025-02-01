@@ -43,11 +43,11 @@ class CoinAddressDerivationTests {
         DASH -> assertEquals("XqHiz8EXYbTAtBEYs4pWTHh7ipEDQcNQeT", address)
         DIGIBYTE -> assertEquals("dgb1qtjgmerfqwdffyf8ghcrkgy52cghsqptynmyswu", address)
 
-        ETHEREUM, SMARTCHAIN, POLYGON, OPTIMISM, ZKSYNC, ARBITRUM, ARBITRUMNOVA, ECOCHAIN, AVALANCHECCHAIN, XDAI,
+        ETHEREUM, SMARTCHAIN, POLYGON, OPTIMISM, ZKSYNC, ARBITRUM, ARBITRUMNOVA, AVALANCHECCHAIN, XDAI,
         FANTOM, CELO, CRONOSCHAIN, SMARTBITCOINCASH, KUCOINCOMMUNITYCHAIN, BOBA, METIS,
-        AURORA, EVMOS, MOONRIVER, MOONBEAM, KAVAEVM, KLAYTN, METER, OKXCHAIN, POLYGONZKEVM, SCROLL,
+        AURORA, EVMOS, MOONRIVER, MOONBEAM, KAVAEVM, KAIA, METER, OKXCHAIN, POLYGONZKEVM, SCROLL,
         CONFLUXESPACE, ACALAEVM, OPBNB, NEON, BASE, LINEA, GREENFIELD, MANTLE, ZENEON, MANTAPACIFIC,
-        ZETAEVM, MERLIN, LIGHTLINK, BLAST, BOUNCEBIT, ZKLINKNOVA,
+        ZETAEVM, MERLIN, LIGHTLINK, BLAST, BOUNCEBIT, ZKLINKNOVA, SONIC,
         -> assertEquals("0x8f348F300873Fd5DA36950B2aC75a26584584feE", address)
 
         RONIN -> assertEquals("ronin:8f348F300873Fd5DA36950B2aC75a26584584feE", address)
@@ -154,5 +154,6 @@ class CoinAddressDerivationTests {
         TIA -> assertEquals("celestia142j9u5eaduzd7faumygud6ruhdwme98qpwmfv7", address)
         NATIVEZETACHAIN -> assertEquals("zeta13u6g7vqgw074mgmf2ze2cadzvkz9snlwywj304", address)
         DYDX -> assertEquals("dydx142j9u5eaduzd7faumygud6ruhdwme98qeayaky", address)
+        PACTUS -> assertEquals("pc1r7ys2g5a4xc2qtm0t4q987m4mvs57w5g0v4pvzg", address)
     }
 }

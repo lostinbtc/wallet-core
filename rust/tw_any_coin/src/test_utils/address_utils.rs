@@ -7,7 +7,7 @@ use crate::ffi::tw_any_address::{
     tw_any_address_create_with_public_key_derivation, tw_any_address_create_with_string,
     tw_any_address_data, tw_any_address_delete, tw_any_address_description,
     tw_any_address_is_valid, tw_any_address_is_valid_base58, tw_any_address_is_valid_bech32,
-    TWAnyAddress,
+    tw_any_address_is_valid_ss58, TWAnyAddress,
 };
 use tw_coin_registry::coin_type::CoinType;
 use tw_coin_registry::registry::get_coin_item;
@@ -29,19 +29,41 @@ impl WithDestructor for TWAnyAddress {
     }
 }
 
-pub fn test_address_derive(coin: CoinType, private_key: &str, address: &str) {
+pub enum KeyType {
+    PrivateKey(&'static str),
+    PublicKey(&'static str),
+}
+
+pub fn test_address_derive(coin: CoinType, key: KeyType, address: &str) {
+    test_address_derive_with_derivation(coin, key, address, TWDerivation::Default)
+}
+
+pub fn test_address_derive_with_derivation(
+    coin: CoinType,
+    key: KeyType,
+    address: &str,
+    derivation: TWDerivation,
+) {
     let coin_item = get_coin_item(coin).unwrap();
 
-    let private_key = TWPrivateKeyHelper::with_hex(private_key);
-    let public_key = TWPublicKeyHelper::wrap(unsafe {
-        tw_private_key_get_public_key_by_type(private_key.ptr(), coin_item.public_key_type as u32)
-    });
+    let public_key = match key {
+        KeyType::PrivateKey(key) => {
+            let private_key = TWPrivateKeyHelper::with_hex(key);
+            TWPublicKeyHelper::wrap(unsafe {
+                tw_private_key_get_public_key_by_type(
+                    private_key.ptr(),
+                    coin_item.public_key_type as u32,
+                )
+            })
+        },
+        KeyType::PublicKey(key) => TWPublicKeyHelper::with_hex(key, coin_item.public_key_type),
+    };
 
     let any_address = TWAnyAddressHelper::wrap(unsafe {
         tw_any_address_create_with_public_key_derivation(
             public_key.ptr(),
             coin as u32,
-            TWDerivation::Default as u32,
+            derivation as u32,
         )
     });
 
@@ -71,10 +93,28 @@ pub fn test_address_valid(coin: CoinType, address: &str) {
     );
 }
 
+pub fn test_address_ss58_is_valid(coin: CoinType, address: &str, ss58: u16) {
+    let addr = TWStringHelper::create(address);
+    assert!(
+        unsafe { tw_any_address_is_valid_ss58(addr.ptr(), coin as u32, ss58) },
+        "'{}' expected to be valid",
+        address
+    );
+}
+
 pub fn test_address_invalid(coin: CoinType, address: &str) {
     let addr = TWStringHelper::create(address);
     assert!(
         !unsafe { tw_any_address_is_valid(addr.ptr(), coin as u32) },
+        "'{}' expected to be invalid",
+        address
+    );
+}
+
+pub fn test_address_ss58_is_invalid(coin: CoinType, address: &str, ss58: u16) {
+    let addr = TWStringHelper::create(address);
+    assert!(
+        !unsafe { tw_any_address_is_valid_ss58(addr.ptr(), coin as u32, ss58) },
         "'{}' expected to be invalid",
         address
     );

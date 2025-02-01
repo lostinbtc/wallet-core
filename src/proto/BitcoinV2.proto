@@ -3,7 +3,10 @@ syntax = "proto3";
 package TW.BitcoinV2.Proto;
 option java_package = "wallet.core.jni.proto";
 
+import "BabylonStaking.proto";
 import "Common.proto";
+import "Utxo.proto";
+import "Zcash.proto";
 
 enum InputSelector {
     // Automatically select enough inputs in an ascending order to cover the outputs of the transaction.
@@ -26,19 +29,17 @@ message PublicKeyOrHash {
     }
 }
 
-// Bitcoin transaction out-point reference.
-message OutPoint {
-    // The hash of the referenced transaction (network byte order, usually needs to be reversed).
-    // The referenced transaction ID in REVERSED order.
-    bytes hash = 1;
-
-    // The position in the previous transactions output that this input references.
-    uint32 vout = 2;
+// Public key and corresponding signature.
+message PublicKeySignature {
+    // Public key bytes. Type of the public key depends on the context.
+    bytes public_key = 1;
+    // Signature 64-length byte array.
+    bytes signature = 2;
 }
 
 message Input {
     // Reference to the previous transaction's output.
-    OutPoint out_point = 1;
+    Utxo.Proto.OutPoint out_point = 1;
     // The amount of satoshis of this input.
     int64 value = 2;
     // The sighash type, normally `All`.
@@ -96,6 +97,21 @@ message Input {
 
             // Create a BRC20 inscription.
             InputBrc20Inscription brc20_inscribe = 9;
+            // Spend a Staking Output via timelock path (staking time expired).
+            // In other words, create a Withdraw transaction.
+            BabylonStaking.Proto.InputBuilder.StakingTimelockPath babylon_staking_timelock_path = 15;
+            // Spend a Staking Output via unbonding path.
+            // In other words, create an Unbonding transaction.
+            BabylonStaking.Proto.InputBuilder.StakingUnbondingPath babylon_staking_unbonding_path = 16;
+            // Spend a Staking Output via slashing path.
+            // In other words, generate an unsigned slashing transaction, pre-sign the staker's signature only and share to Babylon PoS chain.
+            BabylonStaking.Proto.InputBuilder.StakingSlashingPath babylon_staking_slashing_path = 17;
+            // Spend an Unbonding Output via timelock path (unbonding time expired).
+            // In other words, create a Withdraw transaction spending an Unbonding transaction.
+            BabylonStaking.Proto.InputBuilder.UnbondingTimelockPath babylon_unbonding_timelock_path = 18;
+            // Spend an Unbonding Output via slashing path.
+            // In other words, generate an unsigned Slashing transaction, pre-sign the staker's signature only and share to Babylon PoS chain.
+            BabylonStaking.Proto.InputBuilder.UnbondingSlashingPath babylon_unbonding_slashing_path = 19;
         }
     }
 
@@ -149,6 +165,12 @@ message Output {
             OutputBrc20Inscription brc20_inscribe = 9;
             // OP_RETURN output. In most cases, with a zero-amount.
             bytes op_return = 12;
+            // Create a Babylon `Staking` output.
+            BabylonStaking.Proto.OutputBuilder.StakingOutput babylon_staking = 15;
+            // Create a Babylon `Unbonding` output.
+            BabylonStaking.Proto.OutputBuilder.UnbondingOutput babylon_unbonding = 16;
+            // Create a Babylon `Staking` OP_RETURN output.
+            BabylonStaking.Proto.OutputBuilder.OpReturn babylon_staking_op_return = 17;
         }
     }
 
@@ -182,8 +204,10 @@ message Output {
 message ChainInfo {
     // P2PKH prefix for this chain.
     uint32 p2pkh_prefix = 1;
-    // P2SH prefix for this coin type
+    // P2SH prefix for this coin type.
     uint32 p2sh_prefix = 2;
+    // HRP for this coin type if applicable.
+    string hrp = 3;
 }
 
 enum TransactionVersion {
@@ -195,85 +219,77 @@ enum TransactionVersion {
     V2 = 2;
 }
 
-message SigningInput {
+// Transaction builder used in `SigningInput`.
+message TransactionBuilder {
     // Transaction version.
     TransactionVersion version = 1;
-    // User private keys.
-    // Only required if the `sign` method is called.
-    repeated bytes private_keys = 2;
-    // User public keys.
-    // Only required if the `plan`, `preImageHash` methods are called.
-    repeated bytes public_keys = 3;
     // (optional) Block height or timestamp indicating at what point transactions can be included in a block.
     // Zero by default.
-    uint32 lock_time = 4;
+    uint32 lock_time = 2;
     // The inputs to spend.
-    repeated Input inputs = 5;
+    repeated Input inputs = 3;
     // The output of the transaction. Note that the change output is specified
     // in the `change_output` field.
-    repeated Output outputs = 6;
+    repeated Output outputs = 4;
     // How the inputs should be selected.
-    InputSelector input_selector = 7;
+    InputSelector input_selector = 5;
     // The amount of satoshis per vbyte ("satVb"), used for fee calculation.
     // Can be satoshis per byte ("satB") **ONLY** when transaction does not contain segwit UTXOs.
-    int64 fee_per_vb = 8;
+    int64 fee_per_vb = 6;
     // (optional) The change output to be added (return to sender) at the end of the outputs list.
     // The `Output.value` will be overwritten, leave default.
     // Note there can be no change output if the change amount is less than dust threshold.
     // Leave empty to explicitly disable change output creation.
-    Output change_output = 9;
+    Output change_output = 7;
     // The only output with a max available amount to be send.
     // If set, `SigningInput.outputs` and `SigningInput.change` will be ignored.
     // The `Output.value` will be overwritten, leave default.
-    Output max_amount_output = 10;
-    // Chain info includes p2pkh, p2sh address prefixes.
-    // The parameter needs to be set if an input/output has a receiver address pattern.
-    ChainInfo chain_info = 13;
+    Output max_amount_output = 8;
     // One of the "Dust" amount policies.
     // Later, we plan to add support for `DynamicDust` policy with a `min_relay_fee` amount.
     oneof dust_policy {
         // Use a constant "Dust" threshold.
-        int64 fixed_dust_threshold = 14;
+        int64 fixed_dust_threshold = 10;
     }
-    // Whether disable auxiliary random data when signing.
-    // Use for testing **ONLY**.
-    bool dangerous_use_fixed_schnorr_rng = 20;
+    oneof chain_specific {
+        // ZCash specific transaction data.
+        Zcash.Proto.TransactionBuilderExtraData zcash_extra_data = 20;
+    }
 }
 
-message Transaction {
-    // The protocol version, is currently expected to be 1 or 2 (BIP68).
-    int32 version = 1;
-    // Block height or timestamp indicating at what point transactions can be included in a block.
-    // Zero by default.
-    uint32 lock_time = 2;
-    // The transaction inputs.
-    repeated TransactionInput inputs = 3;
-    // The transaction outputs.
-    repeated TransactionOutput outputs = 4;
+// Partially Signed Bitcoin Transaction.
+message Psbt {
+    // Partially Signed Bitcoin Transaction binary encoded.
+    bytes psbt = 1;
+}
 
-    message TransactionInput {
-        // Reference to the previous transaction's output.
-        OutPoint out_point = 1;
-        // The sequence number, used for timelocks, replace-by-fee, etc.
-        uint32 sequence = 2;
-        // The script for claiming the input (non-Segwit/non-Taproot).
-        bytes script_sig = 3;
-        // The script for claiming the input (Segit/Taproot).
-        repeated bytes witness_items = 4;
-    }
+message SigningInput {
+    // User private keys.
+    // Only required if the `sign` method is called.
+    repeated bytes private_keys = 1;
+    // User public keys.
+    // Only required if the `plan`, `preImageHash` methods are called.
+    repeated bytes public_keys = 2;
+    // Chain info includes p2pkh, p2sh address prefixes.
+    // The parameter needs to be set if an input/output has a receiver address pattern.
+    ChainInfo chain_info = 3;
+    // Whether disable auxiliary random data when signing.
+    // Use for testing **ONLY**.
+    bool dangerous_use_fixed_schnorr_rng = 4;
 
-    message TransactionOutput {
-        // The condition for claiming the output.
-        bytes script_pubkey = 1;
-        // The amount of satoshis to spend.
-        int64 value = 2;
+    // The transaction signing type.
+    oneof transaction {
+        // Build a transaction to be signed.
+        TransactionBuilder builder = 10;
+        // Finalize a Partially Signed Bitcoin Transaction by signing the rest of UTXOs.
+        Psbt psbt = 11;
     }
 }
 
 message TransactionPlan {
     // A possible error, `OK` if none.
     Common.Proto.SigningError error = 1;
-    /// Error description.
+    // Error description.
     string error_message = 2;
     // Selected unspent transaction outputs (subset of all input UTXOs).
     repeated Input inputs = 3;
@@ -301,7 +317,7 @@ message PreSigningOutput {
     Common.Proto.SigningError error = 1;
     // Error description.
     string error_message = 2;
-    /// The sighashes to be signed; ECDSA for legacy and Segwit, Schnorr for Taproot.
+    // The sighashes to be signed; ECDSA for legacy and Segwit, Schnorr for Taproot.
     repeated Sighash sighashes = 4;
 
     enum SigningMethod {
@@ -338,9 +354,7 @@ message SigningOutput {
     Common.Proto.SigningError error = 1;
     // Error description.
     string error_message = 2;
-    // Resulting transaction.
-    Transaction transaction = 3;
-    // The encoded transaction that submitted to the network.
+    // The encoded transaction that can be submitted to the network.
     bytes encoded = 4;
     // The transaction ID (hash).
     bytes txid = 5;
@@ -353,4 +367,14 @@ message SigningOutput {
     uint64 weight = 7;
     // The total and final fee of the transaction in satoshis.
     int64 fee = 8;
+    // Optional. Signed transaction serialized as PSBT.
+    // Set if `SigningInput.psbt` is used.
+    Psbt psbt = 9;
+    // Resulting transaction.
+    oneof transaction {
+        // Standard Bitcoin transaction.
+        Utxo.Proto.Transaction bitcoin = 15;
+        // ZCash transaction.
+        Zcash.Proto.Transaction zcash = 16;
+    }
 }

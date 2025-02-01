@@ -36,11 +36,11 @@ class CoinAddressDerivationTests {
         Dash -> "XqHiz8EXYbTAtBEYs4pWTHh7ipEDQcNQeT"
         DigiByte -> "dgb1qtjgmerfqwdffyf8ghcrkgy52cghsqptynmyswu"
 
-        Ethereum, SmartChain, Polygon, Optimism, Zksync, Arbitrum, ArbitrumNova, ECOChain, AvalancheCChain, XDai,
+        Ethereum, SmartChain, Polygon, Optimism, Zksync, Arbitrum, ArbitrumNova, AvalancheCChain, XDai,
         Fantom, Celo, CronosChain, SmartBitcoinCash, KuCoinCommunityChain, Boba, Metis,
-        Aurora, Evmos, Moonriver, Moonbeam, KavaEvm, Klaytn, Meter, OKXChain, PolygonzkEVM, Scroll,
+        Aurora, Evmos, Moonriver, Moonbeam, KavaEvm, Kaia, Meter, OKXChain, PolygonzkEVM, Scroll,
         ConfluxeSpace, AcalaEVM, OpBNB, Neon, Base, Linea, Greenfield, Mantle, ZenEON, MantaPacific,
-        ZetaEVM, Merlin, Lightlink, Blast, BounceBit, ZkLinkNova,
+        ZetaEVM, Merlin, Lightlink, Blast, BounceBit, ZkLinkNova, Sonic,
         -> "0x8f348F300873Fd5DA36950B2aC75a26584584feE"
 
         Ronin -> "ronin:8f348F300873Fd5DA36950B2aC75a26584584feE"
@@ -147,5 +147,6 @@ class CoinAddressDerivationTests {
         Tia -> "celestia142j9u5eaduzd7faumygud6ruhdwme98qpwmfv7"
         NativeZetaChain -> "zeta13u6g7vqgw074mgmf2ze2cadzvkz9snlwywj304"
         Dydx -> "dydx142j9u5eaduzd7faumygud6ruhdwme98qeayaky"
+        Pactus -> "pc1r7ys2g5a4xc2qtm0t4q987m4mvs57w5g0v4pvzg"
     }
 }

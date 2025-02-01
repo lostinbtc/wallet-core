@@ -4,7 +4,7 @@
 
 use crate::error::{CellErrorType, CellResult};
 use bitstream_io::{BigEndian, BitWrite, BitWriter, Numeric};
-use tw_coin_entry::error::prelude::{MapTWError, OrTWError, ResultContext};
+use tw_coin_entry::error::prelude::*;
 use tw_memory::Data;
 
 pub struct BinaryWriter {
@@ -54,7 +54,7 @@ impl BinaryWriter {
         } else {
             self.write_bytes(&data[..data_len - 1])?;
             let last_byte = data[data_len - 1];
-            let l = last_byte | 1 << (8 - rest_bits - 1);
+            let l = last_byte | (1 << (8 - rest_bits - 1));
             self.write(8, l)?;
         }
 

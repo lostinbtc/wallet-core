@@ -4,8 +4,10 @@
 
 pub mod address;
 pub mod constants;
+pub mod context;
 pub mod dust;
 pub mod encode;
+pub mod fee;
 pub mod modules;
 pub mod script;
 pub mod sighash;

@@ -66,6 +66,9 @@
 #include "InternetComputer/Entry.h"
 #include "NativeEvmos/Entry.h"
 #include "NativeInjective/Entry.h"
+#include "BitcoinCash/Entry.h"
+#include "Pactus/Entry.h"
+#include "Komodo/Entry.h"
 // end_of_coin_includes_marker_do_not_modify
 
 using namespace TW;
@@ -125,6 +128,9 @@ Greenfield::Entry GreenfieldDP;
 InternetComputer::Entry InternetComputerDP;
 NativeEvmos::Entry NativeEvmosDP;
 NativeInjective::Entry NativeInjectiveDP;
+BitcoinCash::Entry BitcoinCashDP;
+Pactus::Entry PactusDP;
+Komodo::Entry KomodoDP;
 // end_of_coin_dipatcher_declarations_marker_do_not_modify
 
 CoinEntry* coinDispatcher(TWCoinType coinType) {
@@ -186,6 +192,9 @@ CoinEntry* coinDispatcher(TWCoinType coinType) {
         case TWBlockchainInternetComputer: entry = &InternetComputerDP; break;
         case TWBlockchainNativeEvmos: entry = &NativeEvmosDP; break;
         case TWBlockchainNativeInjective: entry = &NativeInjectiveDP; break;
+        case TWBlockchainBitcoinCash: entry = &BitcoinCashDP; break;
+        case TWBlockchainPactus: entry = &PactusDP; break;
+        case TWBlockchainKomodo: entry = &KomodoDP; break;
         // end_of_coin_dipatcher_switch_marker_do_not_modify
 
         default: entry = nullptr; break;
