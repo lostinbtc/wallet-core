@@ -255,6 +255,21 @@ TEST(HDWallet, DeriveDoge) {
     assertStringsEqual(xpub, "dgub8rjvUmFc6cqR6NRBEj2FBZCHUDUrykPyv24Vea6bCsPex5PzNFrRtr4KN37XgwuVzzC2MikJRW2Ddcp99Ehsqp2iaU4eerNCJVruKxz6Gci");
 }
 
+TEST(HDWallet, DerivePepecoin) {
+    auto wallet = WRAP(TWHDWallet, TWHDWalletCreateWithMnemonic(gWords.get(), gPassphrase.get()));
+    auto key = WRAP(TWPrivateKey, TWHDWalletGetKeyForCoin(wallet.get(), TWCoinTypePepecoin));
+    auto publicKey = WRAP(TWPublicKey, TWPrivateKeyGetPublicKeySecp256k1(key.get(), true));
+    auto publicKeyData = WRAPD(TWPublicKeyData(publicKey.get()));
+
+    assertHexEqual(publicKeyData, "03de2718fcdf403cd2987bf0207cb43537bb807277b6f3cabf9ba9079b55950ffb");
+
+    auto xprv = WRAPS(TWHDWalletGetExtendedPrivateKey(wallet.get(), TWPurposeBIP44, TWCoinTypePepecoin, TWHDVersionDGPV));
+    assertStringsEqual(xprv, "dgpv58FQNncDzfdFw9vEUTHocTLhCe5pR3Fs7m4SrLMuFaBdu1SdQLvm2qhjZmQzyHtb4ArsVFgRhsjAo48A8YAi3MoZtoneWHi9u4NpmCwXYCz");
+
+    auto xpub = WRAPS(TWHDWalletGetExtendedPublicKey(wallet.get(), TWPurposeBIP44, TWCoinTypePepecoin, TWHDVersionDGUB));
+    assertStringsEqual(xpub, "dgub8s8RiUY7YpHbE1aPWgumjJtHfCTTFAHaQMqf1Skt3hEeT4ZKp7UXg97P914UbMsmqJbncAB6X6U9THsB65wuvGjBxPBJLhiV1rQRpGiateR");
+}
+
 TEST(HDWallet, DeriveZilliqa) {
     auto wallet = WRAP(TWHDWallet, TWHDWalletCreateWithMnemonic(gWords.get(), gPassphrase.get()));
     auto key = WRAP(TWPrivateKey, TWHDWalletGetKeyForCoin(wallet.get(), TWCoinTypeZilliqa));
