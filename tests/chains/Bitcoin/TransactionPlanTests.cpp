@@ -544,6 +544,16 @@ TEST(TransactionPlan, MaxAmountDoge) {
     EXPECT_TRUE(verifyPlan(txPlan, {100000000, 2000000000, 200000000}, 2299951200, 48800));
 }
 
+TEST(TransactionPlan, MaxAmountPepecoin) {
+    auto utxos = buildTestUTXOs({Amount(100000000), Amount(2000000000), Amount(200000000)});
+    ASSERT_EQ(sumUTXOs(utxos), Amount(2300000000));
+    auto signingInput = buildSigningInput(Amount(2300000000), 100, utxos, true, TWCoinTypePepecoin);
+
+    auto txPlan = TransactionBuilder::plan(signingInput);
+
+    EXPECT_TRUE(verifyPlan(txPlan, {100000000, 2000000000, 200000000}, 2299951200, 48800));
+}
+
 TEST(TransactionPlan, AmountDecred) {
     auto utxos = buildTestUTXOs({Amount(39900000)});
     auto sigingInput = buildSigningInput(Amount(10000000), 10, utxos, false, TWCoinTypeDecred);
