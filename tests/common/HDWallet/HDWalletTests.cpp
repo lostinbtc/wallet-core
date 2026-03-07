@@ -238,6 +238,20 @@ TEST(HDWallet, privateKeyFromDGRV) {
     EXPECT_EQ(address.string(), "D5taDndQJ1fDF3AM1yWavmJY2BgSi17CUv");
 }
 
+TEST(HDWallet, privateKeyFromPEPV) {
+    const std::string pepv = "xprv9yAiBYnEuWe3dJ9eTVLc9yg1biZQ3FBikkuz3XuFtG2gshFYYjUmtc4dUM5Z4CQrnydM5VH8Lr188ECgRr4ZC1DMyqxptp2ZuPP1hPpnM3n";
+    auto privateKey = HDWallet<>::getPrivateKeyFromExtended(
+        pepv,
+        TWCoinTypePepecoin,
+        DerivationPath(TWPurposeBIP44, TWCoinTypeSlip44Id(TWCoinTypePepecoin), 0, 0, 1)
+    );
+    auto publicKey = privateKey->getPublicKey(TWPublicKeyTypeSECP256k1);
+    auto address = Bitcoin::Address(publicKey, TW::p2pkhPrefix(TWCoinTypePepecoin));
+
+    EXPECT_EQ(hex(publicKey.bytes), "0316af48b7bec719ab98248162e0f3dc14d66f06b6c8fccc7fecc47eca162fc9bc");
+    EXPECT_EQ(address.string(), "Pp3FfRLFxnA8uFqfpZCLpYeBo8TBFPzHFG");
+}
+
 TEST(HDWallet, privateKeyFromXPRVForDGB) {
     const std::string xprvForDgb = "xprv9ynLofyuR3uCqCMJADwzBaPnXB53EVe5oLujvPfdvCxae3NzgEpYjZMgcUeS8EUeYfYVLG61ZgPXm9TZWiwBnLVCgd551vCwpXC19hX3mFJ";
     auto privateKey = HDWallet<>::getPrivateKeyFromExtended(xprvForDgb, TWCoinTypeDigiByte, DerivationPath(TWPurposeBIP44, TWCoinTypeSlip44Id(TWCoinTypeDigiByte), 0, 0, 1));
