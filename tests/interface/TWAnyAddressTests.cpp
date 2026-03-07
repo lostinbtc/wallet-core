@@ -80,6 +80,13 @@ TEST(TWAnyAddress, Data) {
         auto keyHash = WRAPD(TWAnyAddressData(addr.get()));
         assertHexEqual(keyHash, "d726d32d9ff0560e7df35764987fcf01a6a343cf");
     }
+    // base58 pepecoin
+    {
+        auto string = STRING("PjB8XQHXktkMudzQ3ji5gSsW7kPSaRwBSi");
+        auto addr = WRAP(TWAnyAddress, TWAnyAddressCreateWithString(string.get(), TWCoinTypePepecoin));
+        auto keyHash = WRAPD(TWAnyAddressData(addr.get()));
+        assertHexEqual(keyHash, "7b603936c46bc65f53be89dd7426ac6a1dd453aa");
+    }
     // decred
     {
         auto string = STRING("Dsb4fb7SfdLPhKVQFapGRGnokncgNiYmkAe");
