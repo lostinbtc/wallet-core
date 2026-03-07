@@ -25,7 +25,7 @@ pub type SignatureBytes = H512;
 /// ```
 ///
 /// [RFC5912 Appendix A]: https://www.rfc-editor.org/rfc/rfc5912#appendix-A
-#[derive(Debug)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Signature {
     r: H256,
     s: H256,
@@ -71,13 +71,13 @@ impl Signature {
     }
 
     /// Get the `r` component of the signature.
-    pub fn r(&self) -> &[u8] {
-        self.r.as_slice()
+    pub fn r(&self) -> &H256 {
+        &self.r
     }
 
     /// Get the `s` component of the signature.
-    pub fn s(&self) -> &[u8] {
-        self.s.as_slice()
+    pub fn s(&self) -> &H256 {
+        &self.s
     }
 
     /// Returns the standard binary signature representation:
@@ -85,14 +85,28 @@ impl Signature {
     pub fn to_bytes(&self) -> SignatureBytes {
         let mut sign = SignatureBytes::default();
 
-        sign[0..R_LENGTH].copy_from_slice(self.r());
-        sign[R_LENGTH..].copy_from_slice(self.s());
+        sign[0..R_LENGTH].copy_from_slice(self.r().as_slice());
+        sign[R_LENGTH..].copy_from_slice(self.s().as_slice());
 
         sign
     }
 
     pub fn to_vec(&self) -> Vec<u8> {
         self.to_bytes().to_vec()
+    }
+}
+
+impl AsRef<[u8]> for Signature {
+    fn as_ref(&self) -> &[u8] {
+        &self.der_bytes
+    }
+}
+
+impl<'a> TryFrom<&'a [u8]> for Signature {
+    type Error = KeyPairError;
+
+    fn try_from(value: &'a [u8]) -> Result<Self, Self::Error> {
+        Signature::from_bytes(value)
     }
 }
 

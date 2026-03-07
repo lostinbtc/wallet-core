@@ -41,7 +41,7 @@ impl Eip712Message {
     /// Tries to construct an EIP712 message from the given string.
     pub fn new<S: AsRef<str>>(message_to_sign: S) -> MessageSigningResult<Eip712Message> {
         let eip712_msg: Eip712Message = serde_json::from_str(message_to_sign.as_ref())
-            .tw_err(|_| MessageSigningErrorKind::TypeValueMismatch)
+            .tw_err(MessageSigningErrorKind::TypeValueMismatch)
             .context("Error deserializing EIP712 message as JSON")?;
 
         // Check if the given message is actually EIP712.
@@ -61,7 +61,7 @@ impl Eip712Message {
         // Check if `domain.chainId` is expected.
         let chain_id_value = msg.domain["chainId"].clone();
         let chain_id = U256::from_u64_or_decimal_str(chain_id_value)
-            .tw_err(|_| MessageSigningErrorKind::TypeValueMismatch)
+            .tw_err(MessageSigningErrorKind::TypeValueMismatch)
             .context("Invalid chainId")?;
         if chain_id != expected_chain_id {
             return MessageSigningError::err(MessageSigningErrorKind::InvalidChainId).with_context(
@@ -145,13 +145,13 @@ fn encode_string(value: &Json) -> MessageSigningResult<Data> {
 
 fn encode_u256(value: &Json) -> MessageSigningResult<Data> {
     let uint = U256::from_u64_or_decimal_str(value.clone())
-        .tw_err(|_| MessageSigningErrorKind::InvalidParameterValue)?;
+        .tw_err(MessageSigningErrorKind::InvalidParameterValue)?;
     Ok(encode_tokens(&[Token::u256(uint)]))
 }
 
 fn encode_i256(value: &Json) -> MessageSigningResult<Data> {
     let int = I256::from_i64_or_decimal_str(value.clone())
-        .tw_err(|_| MessageSigningErrorKind::InvalidParameterValue)?;
+        .tw_err(MessageSigningErrorKind::InvalidParameterValue)?;
     Ok(encode_tokens(&[Token::i256(int)]))
 }
 
@@ -161,7 +161,7 @@ fn encode_address(value: &Json) -> MessageSigningResult<Data> {
         .or_tw_err(MessageSigningErrorKind::InvalidParameterValue)?;
     // H160 doesn't require the string to be `0x` prefixed.
     let addr_data =
-        H160::from_str(addr_str).tw_err(|_| MessageSigningErrorKind::InvalidParameterValue)?;
+        H160::from_str(addr_str).tw_err(MessageSigningErrorKind::InvalidParameterValue)?;
 
     let addr = Address::from_bytes(addr_data);
     Ok(encode_tokens(&[Token::Address(addr)]))
@@ -172,7 +172,7 @@ fn encode_fix_bytes(value: &Json, expected_len: usize) -> MessageSigningResult<D
         .as_str()
         .or_tw_err(MessageSigningErrorKind::InvalidParameterValue)?;
     let fix_bytes =
-        hex::decode_lenient(str).tw_err(|_| MessageSigningErrorKind::InvalidParameterValue)?;
+        hex::decode_lenient(str).tw_err(MessageSigningErrorKind::InvalidParameterValue)?;
 
     let actual_len = fix_bytes.len();
     if actual_len > expected_len {
@@ -180,7 +180,7 @@ fn encode_fix_bytes(value: &Json, expected_len: usize) -> MessageSigningResult<D
             .with_context(|| format!("Expected '{expected_len}' bytes, found '{actual_len}'"));
     }
     let checked_bytes = NonEmptyBytes::new(fix_bytes)
-        .tw_err(|_| MessageSigningErrorKind::InvalidParameterValue)
+        .tw_err(MessageSigningErrorKind::InvalidParameterValue)
         .context("Empty 'FixBytes' is not allowed")?;
     Ok(encode_tokens(&[Token::FixedBytes(checked_bytes)]))
 }
@@ -191,7 +191,7 @@ fn encode_bytes(value: &Json) -> MessageSigningResult<Data> {
         .or_tw_err(MessageSigningErrorKind::InvalidParameterValue)?;
     let bytes = str
         .decode_hex()
-        .tw_err(|_| MessageSigningErrorKind::InvalidParameterValue)?;
+        .tw_err(MessageSigningErrorKind::InvalidParameterValue)?;
 
     let hash = keccak256(&bytes);
     let checked_bytes = NonEmptyBytes::new(hash).expect("`hash` must not be empty");
@@ -238,7 +238,7 @@ fn encode_custom(
 
     let type_hash = encode_custom_type::type_hash(data_ident, custom_types)?;
     let checked_bytes =
-        NonEmptyBytes::new(type_hash).tw_err(|_| MessageSigningErrorKind::InvalidParameterValue)?;
+        NonEmptyBytes::new(type_hash).tw_err(MessageSigningErrorKind::InvalidParameterValue)?;
     let mut encoded_tokens = encode_tokens(&[Token::FixedBytes(checked_bytes)]);
 
     for (field_idx, field) in data_properties.iter().enumerate() {
@@ -321,7 +321,7 @@ mod encode_custom_type {
                         &field.property_type
                     };
                     // Seen this type before? or not a custom type - skip
-                    if !deps.contains(field_type) || custom_types.contains_key(field_type) {
+                    if !deps.contains(field_type) && custom_types.contains_key(field_type) {
                         types_stack.push(field_type);
                     }
                 }
@@ -340,6 +340,8 @@ mod tests {
 
     #[test]
     fn test_build_dependencies() {
+        // This custom types definition has an intentional cycle dependency between `Person` and `Mail`
+        // to test if the `build_dependencies` function can handle it without getting into an infinite loop.
         let custom_types = r#"{
 			"EIP712Domain": [
 				{ "name": "name", "type": "string" },
@@ -349,7 +351,8 @@ mod tests {
 			],
 			"Person": [
 				{ "name": "name", "type": "string" },
-				{ "name": "wallet", "type": "address" }
+				{ "name": "wallet", "type": "address" },
+				{ "name": "mail", "type": "Mail" }
 			],
 			"Mail": [
 				{ "name": "from", "type": "Person" },
@@ -398,6 +401,34 @@ mod tests {
         let custom_types: CustomTypes = serde_json::from_str(custom_types).expect("alas error!");
         assert_eq!(
             "Mail(Person from,Person to,string contents)Person(string name,address wallet)",
+            encode_custom_type::encode_type(&custom_types, "Mail").expect("alas error!")
+        )
+    }
+
+    #[test]
+    fn test_encode_type_cyclic_dependency() {
+        let custom_types = r#"{
+			"EIP712Domain": [
+				{ "name": "name", "type": "string" },
+				{ "name": "version", "type": "string" },
+				{ "name": "chainId", "type": "uint256" },
+				{ "name": "verifyingContract", "type": "address" }
+			],
+			"Person": [
+				{ "name": "name", "type": "string" },
+				{ "name": "wallet", "type": "address" },
+				{ "name": "mail", "type": "Mail" }
+			],
+			"Mail": [
+				{ "name": "from", "type": "Person" },
+				{ "name": "to", "type": "Person" },
+				{ "name": "contents", "type": "string" }
+			]
+		}"#;
+
+        let custom_types: CustomTypes = serde_json::from_str(custom_types).expect("alas error!");
+        assert_eq!(
+            "Mail(Person from,Person to,string contents)Person(string name,address wallet,Mail mail)",
             encode_custom_type::encode_type(&custom_types, "Mail").expect("alas error!")
         )
     }

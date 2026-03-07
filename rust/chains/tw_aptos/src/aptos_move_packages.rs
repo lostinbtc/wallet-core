@@ -192,22 +192,6 @@ pub fn token_transfers_claim_script(
     )))
 }
 
-pub fn managed_coin_register(coin_type: TypeTag) -> TransactionPayload {
-    TransactionPayload::EntryFunction(EntryFunction::new(
-        ModuleId::new(
-            AccountAddress::new([
-                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                0, 0, 0, 1,
-            ]),
-            ident_str!("managed_coin").to_owned(),
-        ),
-        ident_str!("register").to_owned(),
-        vec![coin_type],
-        vec![],
-        json!([]),
-    ))
-}
-
 pub fn fungible_asset_transfer(
     metadata_address: AccountAddress,
     to: AccountAddress,
@@ -223,7 +207,7 @@ pub fn fungible_asset_transfer(
         ),
         ident_str!("transfer").to_owned(),
         vec![TypeTag::from_str("0x1::fungible_asset::Metadata")
-            .tw_err(|_| SigningErrorType::Error_internal)?],
+            .tw_err(SigningErrorType::Error_internal)?],
         vec![
             bcs::encode(&metadata_address)?,
             bcs::encode(&to)?,

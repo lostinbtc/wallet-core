@@ -6,7 +6,8 @@
 //!
 //! This crate reuses Bitcoin's transaction Signer, SigHasher, and compiler APIs, ensuring a familiar
 //! and efficient experience for developers who have previously integrated Bitcoin via WalletCore.
-//! However, `tw_zcash` introduces a different transaction structure (transparent only)
+//!
+//! Unlike Bitcoin, ZCash introduces a different transaction structure (transparent only)
 //! and transaction builder.
 //!
 //! ## Key Features
@@ -126,8 +127,10 @@
 //! assert.equal(output.signingResultV2!.error, TW.Common.Proto.SigningError.OK);
 //! ```
 
+pub mod address;
 pub mod context;
 pub mod entry;
 pub mod modules;
 pub mod t_address;
+pub mod tex_address;
 pub mod transaction;

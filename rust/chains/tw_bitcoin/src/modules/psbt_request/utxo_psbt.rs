@@ -96,7 +96,7 @@ impl<'a> UtxoPsbt<'a> {
             },
             StandardScript::P2SH(_) | StandardScript::P2WSH(_) => {
                 SigningError::err(SigningErrorType::Error_not_supported)
-                    .context("P2SH and P2WSH scriptPubkey's are not supported yet")
+                    .context("P2SH and P2WSH scriptPubkeys are not supported yet")
             },
             StandardScript::OpReturn(_) => SigningError::err(SigningErrorType::Error_invalid_utxo)
                 .context("Cannot spend an OP_RETURN output"),
@@ -115,7 +115,7 @@ impl<'a> UtxoPsbt<'a> {
 
         let amount = amount
             .try_into()
-            .tw_err(|_| SigningErrorType::Error_invalid_utxo_amount)
+            .tw_err(SigningErrorType::Error_invalid_utxo_amount)
             .context("PSBT UTXO amount is too large")?;
 
         Ok(UtxoBuilder::default()

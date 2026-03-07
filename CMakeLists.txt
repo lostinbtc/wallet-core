@@ -91,6 +91,11 @@ elseif (${TW_COMPILE_JAVA})
     find_package(JNI REQUIRED)
     target_include_directories(TrustWalletCore PRIVATE ${JNI_INCLUDE_DIRS})
     target_link_libraries(TrustWalletCore PUBLIC ${WALLET_CORE_BINDGEN} ${PROJECT_NAME}_INTERFACE PRIVATE TrezorCrypto protobuf Boost::boost)
+elseif (${FLUTTER})
+    message("Configuring for Flutter")
+    file(GLOB_RECURSE sources src/*.c src/*.cc src/*.cpp src/*.h)
+    add_library(TrustWalletCore SHARED ${sources} ${PROTO_SRCS} ${PROTO_HDRS})
+    target_link_libraries(TrustWalletCore PUBLIC ${WALLET_CORE_BINDGEN} ${PROJECT_NAME}_INTERFACE PRIVATE TrezorCrypto protobuf Boost::boost)
 else ()
     message("Configuring standalone")
     file(GLOB_RECURSE sources src/*.c src/*.cc src/*.cpp src/*.h)
@@ -111,7 +116,6 @@ endif ()
 target_include_directories(TrustWalletCore
         PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/Generated>
         $<INSTALL_INTERFACE:include>
         PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src

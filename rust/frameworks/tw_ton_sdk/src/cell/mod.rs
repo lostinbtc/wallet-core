@@ -110,7 +110,7 @@ impl Cell {
         self.depths[level.min(3) as usize]
     }
 
-    pub fn parser(&self) -> CellParser {
+    pub fn parser(&self) -> CellParser<'_> {
         CellParser::new(&self.data, self.bit_len)
     }
 
@@ -277,11 +277,11 @@ fn get_refs_descriptor(
     let references_len: u8 = references
         .len()
         .try_into()
-        .tw_err(|_| CellErrorType::CellParserError)
+        .tw_err(CellErrorType::CellParserError)
         .with_context(|| format!("Got too much Cell references: {}", references.len()))?;
     let level_mask_u8: u8 = level_mask
         .try_into()
-        .tw_err(|_| CellErrorType::CellParserError)
+        .tw_err(CellErrorType::CellParserError)
         .with_context(|| format!("Cell level_mask is too large: {level_mask}"))?;
 
     level_mask_u8

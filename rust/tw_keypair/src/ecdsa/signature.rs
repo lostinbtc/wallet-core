@@ -94,6 +94,10 @@ impl<C: EcdsaCurve> Signature<C> {
         der::Signature::new(self.r(), self.s())
     }
 
+    pub fn to_verify_sig(&self) -> VerifySignature<C> {
+        VerifySignature::from(self.clone())
+    }
+
     /// # Panic
     ///
     /// `r` and `s` must be 32 byte arrays, otherwise the function panics.
@@ -126,8 +130,11 @@ pub struct VerifySignature<C: EcdsaCurve> {
 
 impl<C: EcdsaCurve> VerifySignature<C> {
     pub fn from_der(der_signature: der::Signature) -> KeyPairResult<Self> {
-        let signature = Signature::signature_from_slices(der_signature.r(), der_signature.s())
-            .map_err(|_| KeyPairError::InvalidSignature)?;
+        let signature = Signature::signature_from_slices(
+            der_signature.r().as_slice(),
+            der_signature.s().as_slice(),
+        )
+        .map_err(|_| KeyPairError::InvalidSignature)?;
         Ok(VerifySignature { signature })
     }
 

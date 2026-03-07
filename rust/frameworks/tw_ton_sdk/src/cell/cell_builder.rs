@@ -110,7 +110,7 @@ impl CellBuilder {
         if val.is_zero() {
             self.store_u8(4, 0)
         } else {
-            let num_bytes = (val.bits() + 7) / 8;
+            let num_bytes = val.bits().div_ceil(8);
             self.store_u8(4, num_bytes as u8)?;
             self.store_uint(num_bytes * 8, val)
         }
@@ -199,7 +199,7 @@ impl CellBuilder {
         let vec = self
             .bit_writer
             .finish()
-            .tw_err(|_| CellErrorType::InternalError)
+            .tw_err(CellErrorType::InternalError)
             .context("Stream must be byte-aligned already")?;
 
         let bit_len = vec.len() * 8 - trailing_zeros;
