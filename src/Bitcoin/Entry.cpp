@@ -39,6 +39,7 @@ bool Entry::validateAddress(TWCoinType coin, const std::string& address, const P
         return isValidBase58 || ExchangeAddress::isValid(address);
     case TWCoinTypeDash:
     case TWCoinTypeDogecoin:
+    case TWCoinTypePepecoin:
     case TWCoinTypePivx:
     case TWCoinTypeRavencoin:
     default:
@@ -111,6 +112,7 @@ std::string Entry::deriveAddress(TWCoinType coin, const PublicKey& publicKey, TW
 
     case TWCoinTypeDash:
     case TWCoinTypeDogecoin:
+    case TWCoinTypePepecoin:
     case TWCoinTypeMonacoin:
     case TWCoinTypePivx:
     case TWCoinTypeQtum:
