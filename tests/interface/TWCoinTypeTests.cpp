@@ -116,6 +116,7 @@ TEST(TWCoinType, TWPublicKeyType) {
     ASSERT_EQ(TWPublicKeyTypeSECP256k1, TWCoinTypePublicKeyType(TWCoinTypeDash));
     ASSERT_EQ(TWPublicKeyTypeSECP256k1, TWCoinTypePublicKeyType(TWCoinTypeDecred));
     ASSERT_EQ(TWPublicKeyTypeSECP256k1, TWCoinTypePublicKeyType(TWCoinTypeDogecoin));
+    ASSERT_EQ(TWPublicKeyTypeSECP256k1, TWCoinTypePublicKeyType(TWCoinTypePepecoin));
     ASSERT_EQ(TWPublicKeyTypeSECP256k1, TWCoinTypePublicKeyType(TWCoinTypeEOS));
     ASSERT_EQ(TWPublicKeyTypeSECP256k1Extended, TWCoinTypePublicKeyType(TWCoinTypeEthereum));
     ASSERT_EQ(TWPublicKeyTypeSECP256k1Extended, TWCoinTypePublicKeyType(TWCoinTypeEthereumClassic));
