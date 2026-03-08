@@ -125,10 +125,10 @@
     }
   },
   {
-    "id": "pepe",
+    "id": "pepecoin",
     "name": "Pepecoin",
     "coinId": 3434,
-    "symbol": "PEPE",
+    "symbol": "PEP",
     "decimals": 8,
     "blockchain": "Bitcoin",
     "derivation": [
@@ -145,9 +145,9 @@
     "publicKeyHasher": "sha256ripemd",
     "base58Hasher": "sha256d",
     "explorer": {
-      "url": "https://blockchair.com",
-      "txPath": "/pepecoin/transaction/",
-      "accountPath": "/pepecoin/address/"
+      "url": "https://pepeblocks.com",
+      "txPath": "/tx/",
+      "accountPath": "/address/"
     },
     "info": {
       "url": "https://pepecoin.org",

@@ -8,7 +8,7 @@
 
 #include <gtest/gtest.h>
 
-TEST(Pepe, LockScripts) {
+TEST(Pepecoin, LockScripts) {
     auto script = WRAP(TWBitcoinScript, TWBitcoinScriptLockScriptForAddress(STRING("PjB8XQHXktkMudzQ3ji5gSsW7kPSaRwBSi").get(), TWCoinTypePepecoin));
     auto scriptData = WRAPD(TWBitcoinScriptData(script.get()));
     assertHexEqual(scriptData, "76a9147b603936c46bc65f53be89dd7426ac6a1dd453aa88ac");

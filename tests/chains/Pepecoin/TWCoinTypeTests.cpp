@@ -10,7 +10,6 @@
 #include <TrustWalletCore/TWCoinTypeConfiguration.h>
 #include <gtest/gtest.h>
 
-
 TEST(TWPepecoinCoinType, TWCoinType) {
     auto symbol = WRAPS(TWCoinTypeConfigurationGetSymbol(TWCoinTypePepecoin));
     auto txId = WRAPS(TWStringCreateWithUTF8Bytes("t123"));
@@ -24,9 +23,9 @@ TEST(TWPepecoinCoinType, TWCoinType) {
     ASSERT_EQ(TWBlockchainBitcoin, TWCoinTypeBlockchain(TWCoinTypePepecoin));
     ASSERT_EQ(0x16, TWCoinTypeP2shPrefix(TWCoinTypePepecoin));
     ASSERT_EQ(0x0, TWCoinTypeStaticPrefix(TWCoinTypePepecoin));
-    assertStringsEqual(symbol, "PEPE");
-    assertStringsEqual(txUrl, "https://blockchair.com/pepecoin/transaction/t123");
-    assertStringsEqual(accUrl, "https://blockchair.com/pepecoin/address/a12");
-    assertStringsEqual(id, "pepe");
+    assertStringsEqual(symbol, "PEP");
+    assertStringsEqual(txUrl, "https://pepeblocks.com/tx/t123");
+    assertStringsEqual(accUrl, "https://pepeblocks.com/address/a12");
+    assertStringsEqual(id, "pepecoin");
     assertStringsEqual(name, "Pepecoin");
 }

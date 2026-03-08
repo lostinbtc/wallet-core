@@ -89,7 +89,7 @@ This list is generated from [./registry.json](../registry.json)
 | 2301    | Qtum             | QTUM   | <img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/qtum/info/logo.png" width="32" />         | <https://qtum.org>            |
 | 2718    | Nebulas          | NAS    | <img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/nebulas/info/logo.png" width="32" />      | <https://nebulas.io>          |
 | 3030    | Hedera           | HBAR   | <img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/hedera/info/logo.png" width="32" />       | <https://hedera.com/>         |
-| 3434    | Pepecoin         | PEPE   | <img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/pepe/info/logo.png" width="32" />         | <https://pepecoin.org>        |
+| 3434    | Pepecoin         | PEP    | <img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/pepecoin/info/logo.png" width="32" />     | <https://pepecoin.org>        |
 | 4200    | Merlin           | BTC    | <img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/merlin/info/logo.png" width="32" />       | <https://merlinchain.io>      |
 | 4326    | MegaETH          | ETH    | <img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/megaeth/info/logo.png" width="32" />      | <https://www.megaeth.com>     |
 | 5000    | Mantle           | MNT    | <img src="https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/mantle/info/logo.png" width="32" />       | <https://www.mantle.xyz>      |
