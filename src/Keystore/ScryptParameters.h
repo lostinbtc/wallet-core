@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Data.h"
+#include "TrustWalletCore/TWStoredKeyEncryptionLevel.h"
 #include "../HexCoding.h"
 
 #include <nlohmann/json.hpp>
@@ -63,6 +64,9 @@ struct ScryptParameters {
     /// Block size factor.
     uint32_t r = defaultR;
 
+    /// Returns a preset of Scrypt encryption parameters for the given encryption level.
+    static ScryptParameters getPreset(TWStoredKeyEncryptionLevel preset);
+
     /// Generates Scrypt encryption parameters with the minimal sufficient level (4096), and with a random salt.
     static ScryptParameters minimal();
     /// Generates Scrypt encryption parameters with the weak sufficient level (16k), and with a random salt.
@@ -88,6 +92,17 @@ struct ScryptParameters {
     ///
     /// - Returns: a `ValidationError` or `nil` if the parameters are valid.
     std::optional<ScryptValidationError> validate() const;
+
+    /// Regenerates the parameters with recommended Scrypt parameters.
+    /// Note: this method only regenerates the salt with a random value for now,
+    /// but it can be extended in the future to also update the N, r, and p parameters.
+    ScryptParameters regenerateWithRecommendedParams() const;
+
+    /// Checks if the parameters should be fixed, i.e. if they are "valid" but do not meet the recommended security requirements,
+    /// for example if the salt is empty or too short.
+    bool shouldFix() const {
+        return salt.size() < minSaltLength;
+    }
 
     /// Initializes `ScryptParameters` with a JSON object.
     explicit ScryptParameters(const nlohmann::json& json);
